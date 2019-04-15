@@ -2,89 +2,94 @@ from colorama import init, Fore, Back, Style
 from random import randint
 import pandas as pd
 
-init() # belongs to colorama
+init() # needed for colorama package
 
 RED  = '\033[31m' # RED
 GREEN  = '\033[32m' # GREEN
 
 def overhoor(DATA):
     """ Rehearses a list of [[question, answer]] pairs. It repeats a question if it is answered wrong, and in the end all 
-    questions that have been answered wrong are repeated once more (just like in WRTS)"""
-
-    asked_questions = []                # list of indices (Integers) of answered questions
-    intermediate_repeat_list = []       # list of indices (Integers) of -incorrectly- answered questions to be repeated during the rehearsal
-    final_repeat_list = []              # list of indices (Integers) of -incorrectly- answered questions to be repeated in the end
-
-    n_correct = 0
-    n_wrong = 0
+    questions that have been answered wrong are repeated once more (just like in WRTS: https://wrts.nl/signin)"""
 
     for _ in range(len(DATA)):
-        # pick next question
-        index, asked_questions = pick_question(asked_questions, DATA)
+        question_number, asked_questions_list = pick_question([], DATA)
 
-        # get user response
-        meaning, response = ask_question(index, DATA)
+        user_answer = ask_question(question_number, DATA)
 
-        # check if answer is correct
-        isCorrect = check_correct(meaning, response)
-        if (isCorrect):
-            n_correct += 1
-        else:
-            n_wrong += 1
-            final_repeat_list.append(DATA[index])
-            if intermediate_repeat_list:
-                intermediate_repeat_list.append(index)
-            else:
-                # the falses are dummy's, we want to repeat a question answered incorrectly after 2 other words have passed by
-                intermediate_repeat_list.extend([False, False, index])
+        meaning = get_meaning(question_number, DATA)
 
-        # show how many words are left and how well you are doing
-        print_progress(len(DATA), len(asked_questions), n_correct, n_wrong)
+        is_correct = check_correct(meaning, user_answer)
+        
+        n_correct, n_wrong, questions_to_repeat, final_repeat_list = do_administration(is_correct, question_number, 0, 0, [], [])
+        
+        print_progress(len(DATA), len(asked_questions_list), n_correct, n_wrong)
     
-        # if there is a question to be repeated, repeat it
-        if intermediate_repeat_list:
-            intermediate_repeat_list = repeat_question_if_necessary(intermediate_repeat_list, DATA)
+        # repeat a question (if necessary)
+        if questions_to_repeat:
+            questions_to_repeat = repeat_question(questions_to_repeat, DATA)
 
     return final_repeat_list
 
 
-def pick_question(asked_questions, DATA):
+def pick_question(asked_questions_list, DATA):
     """ Picks a random question that hasn't been answered yet """
+    question_number = randint(0, len(DATA)-1)
 
-    index = randint(0, len(DATA)-1)
-    while (index in asked_questions):
-        index = randint(0, len(DATA)-1)
-    asked_questions.append(index)
-    return index, asked_questions
+    while (question_number in asked_questions_list):
+        question_number = randint(0, len(DATA)-1)
+    asked_questions_list.append(question_number)
+    
+    return question_number, asked_questions_list
 
 
-def ask_question(pairIndex, DATA):
+def ask_question(question_number, DATA):
     """ Ask the question to the user and get an answer """
-
-    kanji = DATA[pairIndex][0]
-    meaning = DATA[pairIndex][1]
+    kanji = DATA[question_number][0]
     print(kanji)
-    return meaning, input()
+    return input()
+
+
+def get_meaning(question_number, DATA):
+    """ Looks up the meaning of question_number of DATA"""
+    return DATA[question_number][1]
 
 
 def check_correct(correctAnswer, response):
     """ Check if the response matches the meaning"""
     
     if response == correctAnswer:
-        cprint("CORRECT", "GREEN", "black")
+        color_print("CORRECT", "GREEN", "black")
         return True
     else:
-        cprint(correctAnswer, "RED", "black")
+        color_print(correctAnswer, "RED", "black")
         return False
 
 
-def repeat_question_if_necessary(repeat_list, DATA):
+def do_administration(is_correct, question_number, n_correct, n_wrong, questions_to_repeat, final_repeat_list):
+    if (is_correct):
+        n_correct += 1
+    else:
+        n_wrong += 1
+        final_repeat_list.append(question_number)
+        questions_to_repeat = add_to_repeat_list(questions_to_repeat, question_number)
+    return n_correct, n_wrong, final_repeat_list, questions_to_repeat
+
+
+def add_to_repeat_list(questions_to_repeat, question_number):
+    if questions_to_repeat:
+                questions_to_repeat.append(question_number)
+    else:
+        # the falses are dummy's, we want to repeat a question answered incorrectly after 2 other words have passed by
+        questions_to_repeat.extend([False, False, question_number])
+    return questions_to_repeat
+
+
+def repeat_question(repeat_list, DATA):
     head = repeat_list.pop(0)
-    if head:
+    if head:        
         meaning, response = ask_question(head, DATA)
-        isCorrect = check_correct(meaning, response)
-        # if again wrong -> put in repeatList again
-        if not isCorrect:
+        correct = check_correct(meaning, response)
+        if not correct:
             if repeat_list:
                 repeat_list.append(head)
             else:
@@ -92,8 +97,9 @@ def repeat_question_if_necessary(repeat_list, DATA):
     return repeat_list
 
 
-def cprint(msg, foreground, background):
-    """ Taken from: https://stackoverflow.com/questions/37340049/how-do-i-print-coloRED-output-to-the-terminal-in-python """
+def color_print(msg, foreground, background):
+    """ Taken from: https://stackoverflow.com/questions/37340049/how-do-i-print-colored-output-to-the-terminal-in-python 
+    Allows for printing to command line in color """
     fground = foreground.upper()
     bground = background.upper()
     style = getattr(Fore, fground) + getattr(Back, bground)
