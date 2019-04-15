@@ -10,23 +10,28 @@ GREEN  = '\033[32m' # GREEN
 def overhoor(DATA):
     """ Rehearses a list of [[question, answer]] pairs. It repeats a question if it is answered wrong, and in the end all 
     questions that have been answered wrong are repeated once more (just like in WRTS: https://wrts.nl/signin)"""
+    
+    n_correct = 0
+    n_wrong = 0
+    asked_questions_list = []
+    questions_to_repeat = []
+    final_repeat_list = []
 
     for _ in range(len(DATA)):
-        question_number, asked_questions_list = pick_question([], DATA)
+        question_number, asked_questions_list = pick_question(asked_questions_list, DATA)
 
         user_answer = ask_question(question_number, DATA)
 
         meaning = get_meaning(question_number, DATA)
 
         is_correct = check_correct(meaning, user_answer)
-        
-        n_correct, n_wrong, questions_to_repeat, final_repeat_list = do_administration(is_correct, question_number, 0, 0, [], [])
-        
-        print_progress(len(DATA), len(asked_questions_list), n_correct, n_wrong)
+
+        n_correct, n_wrong, questions_to_repeat, final_repeat_list = do_administration(is_correct, question_number, n_correct, n_wrong, questions_to_repeat, final_repeat_list)
+
+        show_progress(len(DATA), len(asked_questions_list), n_correct, n_wrong)
     
-        # repeat a question (if necessary)
         if questions_to_repeat:
-            questions_to_repeat = repeat_question(questions_to_repeat, DATA)
+            questions_to_repeat = repeat_question(questions_to_repeat, DATA)            
 
     return final_repeat_list
 
@@ -56,7 +61,6 @@ def get_meaning(question_number, DATA):
 
 def check_correct(correctAnswer, response):
     """ Check if the response matches the meaning"""
-    
     if response == correctAnswer:
         color_print("CORRECT", "GREEN", "black")
         return True
@@ -72,12 +76,12 @@ def do_administration(is_correct, question_number, n_correct, n_wrong, questions
         n_wrong += 1
         final_repeat_list.append(question_number)
         questions_to_repeat = add_to_repeat_list(questions_to_repeat, question_number)
-    return n_correct, n_wrong, final_repeat_list, questions_to_repeat
+    return n_correct, n_wrong, questions_to_repeat, final_repeat_list
 
 
 def add_to_repeat_list(questions_to_repeat, question_number):
     if questions_to_repeat:
-                questions_to_repeat.append(question_number)
+        questions_to_repeat.append(question_number)
     else:
         # the falses are dummy's, we want to repeat a question answered incorrectly after 2 other words have passed by
         questions_to_repeat.extend([False, False, question_number])
@@ -87,7 +91,8 @@ def add_to_repeat_list(questions_to_repeat, question_number):
 def repeat_question(repeat_list, DATA):
     head = repeat_list.pop(0)
     if head:        
-        meaning, response = ask_question(head, DATA)
+        response = ask_question(head, DATA)
+        meaning = get_meaning(head, DATA)
         correct = check_correct(meaning, response)
         if not correct:
             if repeat_list:
@@ -106,7 +111,7 @@ def color_print(msg, foreground, background):
     print(style + msg + Style.RESET_ALL)
 
 
-def print_progress(n_total, n_asked, n_correct, n_wrong):
+def show_progress(n_total, n_asked, n_correct, n_wrong):
     print( str(n_total - n_asked) + " to go, " + str(n_correct) + " correct, " + str(n_wrong) + " wrong")
 
 

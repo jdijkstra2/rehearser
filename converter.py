@@ -1,7 +1,7 @@
 import string
 
 def convert(filename):
-    """ Converts a complete wikipedia table of kanji characters to a rehearsable list of pairs [[kanji, meaning]]"""
+    """ Converts a wikipedia table of kanji characters to a rehearsable list of pairs [kanji, meaning]"""
     
     lines = open(filename, encoding='utf-8')
     pairs = []

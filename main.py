@@ -11,7 +11,7 @@ parser.add_argument("-f")
 args = parser.parse_args()
 
 def get_data_from_file(filename):
-    """ Extracts a list of [[question, answer]] pairs from the file given"""
+    """ Extracts a list of [question, answer] pairs from the file given"""
     
     if ".xlsx" in filename:
         DATA = pd.read_excel("excel_files\\" + filename).values 
