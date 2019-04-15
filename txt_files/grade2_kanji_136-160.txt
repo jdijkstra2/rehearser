@@ -1,0 +1,25 @@
+﻿216 	売 	7 	sell 	bai 	u-ru
+217 	午 	4 	noon 	go 	uma
+218 	汽 	7 	steam 	ki 	
+219 	弓 	3 	bow  	kyū 	yumi
+220 	回 	6 	times 	kai 	
+221 	会 	6 	meet 	kai, e 	a-u
+222 	組 	11 	team 	so 	kumi
+223 	船 	11 	ship 	sen 	fune
+224 	明 	8 	bright 	mei 	aka-rui
+225 	社 	7 	company 	sha 	yashiro
+226 	切 	4 	cut 	setsu 	ki-ru
+227 	電 	13 	electricity 	den 	
+228 	毎 	6 	every 	mai 	goto
+229 	合 	6 	fit 	gou 	a-u
+230 	当 	6 	this; hit 	tō 	a-taru
+231 	台 	5 	pedestal 	dai, tai 	
+232 	楽 	13 	music; pleasure 	gaku, raku 	tano-shii
+233 	公 	4 	public 	kou 	ōyake
+234 	引 	4 	pull 	in 	hi-ku
+235 	科 	9 	section 	ka 	
+236 	歌 	14 	song 	ka 	uta
+237 	刀 	2 	sword 	tou 	katana
+238 	番 	12 	number 	ban 	
+239 	用 	5 	use 	you 	mochi-iru
+240 	何 	7 	what 	ka 	nani, nan 
