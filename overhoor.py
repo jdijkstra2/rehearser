@@ -13,12 +13,13 @@ def overhoor(DATA):
     
     n_correct = 0
     n_wrong = 0
+
     asked_questions_list = []
-    questions_to_repeat = []
+    
     final_repeat_list = []
 
     for _ in range(len(DATA)):
-        question_number, asked_questions_list = pick_question(asked_questions_list, DATA)
+        question_number, asked_questions_list = pick_random_new_question(asked_questions_list, DATA)
 
         user_answer = ask_question(question_number, DATA)
 
@@ -26,18 +27,16 @@ def overhoor(DATA):
 
         is_correct = check_correct(meaning, user_answer)
 
-        n_correct, n_wrong, questions_to_repeat, final_repeat_list = do_administration(is_correct, question_number, n_correct, n_wrong, questions_to_repeat, final_repeat_list)
+        n_correct, n_wrong, final_repeat_list = do_administration(is_correct, question_number, n_correct, n_wrong, final_repeat_list, DATA)
 
-        show_progress(len(DATA), len(asked_questions_list), n_correct, n_wrong)
-    
-        if questions_to_repeat:
-            questions_to_repeat = repeat_question(questions_to_repeat, DATA)            
+        show_progress(len(DATA), len(asked_questions_list), n_correct, n_wrong)     
 
     return final_repeat_list
 
 
-def pick_question(asked_questions_list, DATA):
+def pick_random_new_question(asked_questions_list, DATA):
     """ Picks a random question that hasn't been answered yet """
+
     question_number = randint(0, len(DATA)-1)
 
     while (question_number in asked_questions_list):
@@ -69,14 +68,13 @@ def check_correct(correctAnswer, response):
         return False
 
 
-def do_administration(is_correct, question_number, n_correct, n_wrong, questions_to_repeat, final_repeat_list):
+def do_administration(is_correct, question_number, n_correct, n_wrong, final_repeat_list, DATA):
     if (is_correct):
         n_correct += 1
     else:
         n_wrong += 1
-        final_repeat_list.append(question_number)
-        questions_to_repeat = add_to_repeat_list(questions_to_repeat, question_number)
-    return n_correct, n_wrong, questions_to_repeat, final_repeat_list
+        final_repeat_list.append([DATA[question_number][0], DATA[question_number][1]])
+    return n_correct, n_wrong, final_repeat_list
 
 
 def add_to_repeat_list(questions_to_repeat, question_number):
@@ -112,7 +110,9 @@ def color_print(msg, foreground, background):
 
 
 def show_progress(n_total, n_asked, n_correct, n_wrong):
-    print( str(n_total - n_asked) + " to go, " + str(n_correct) + " correct, " + str(n_wrong) + " wrong")
+    print( str(n_total - n_asked + n_wrong) + " to go, " + str(n_correct) + " correct, " + str(n_wrong) + " wrong")
+
+#TODO: Fix problem where error occurs if last question is answered wrong 
 
 
 

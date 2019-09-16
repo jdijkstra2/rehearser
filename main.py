@@ -7,11 +7,13 @@ import pandas as pd
 import argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument("-f")
+parser.add_argument("-f") # Filename
+parser.add_argument("-s") # Start index
+parser.add_argument("-e") # End index
 args = parser.parse_args()
 
 def get_data_from_file(filename):
-    """ Extracts a list of [question, answer] pairs from the file given"""
+    """ Extracts a [[question, answer]] structure from the file given in filename"""
     
     if ".xlsx" in filename:
         DATA = pd.read_excel("excel_files\\" + filename).values 
@@ -31,20 +33,26 @@ def main():
         DATA = get_data_from_file(response)
 
     # start rehearsal
+
+    # if start and end point given
+    if args.s and args.e:
+        DATA = DATA[int(args.s):int(args.e)]
+    # if only start point given
+    elif args.s:
+        DATA = DATA[int(args.s):]
+    # if only end point given
+    elif args.e:
+        DATA = DATA[:int(args.e)]
+
     final_repeat_list = overhoor(DATA)
-    # final_repeat_list = overhoor(DATA[:15]) # rehearse first 15 only
-    # final_repeat_list = overhoor(DATA[15:30]) # rehearse 15-30 only
-    # final_repeat_list = overhoor(DATA[30:45]) # ... etc
-    # final_repeat_list = overhoor(DATA[45:60])
-    # final_repeat_list = overhoor(DATA[60:75])
-    # final_repeat_list = overhoor(DATA[75:90])
-    # final_repeat_list = overhoor(DATA[90:105])
-    # final_repeat_list = overhoor(DATA[105:120])
-    # final_repeat_list = overhoor(DATA[120:135])
-    # final_repeat_list = overhoor(DATA[135:150])
-    # final_repeat_list = overhoor(DATA[150:165]) 
+
+    n_wrong = len(final_repeat_list)
 
     while(final_repeat_list):
         final_repeat_list = overhoor(final_repeat_list)
+
+    n_total = len(DATA)
+    print(str(n_total-n_wrong) + "/" + str(n_total)+ " correct on first try.")
+    print("Grade: " + str(round((((n_total-n_wrong)/n_total)*10), 1)) + "/10")
 
 main()
