@@ -14,12 +14,11 @@ def overhoor(DATA):
     n_correct = 0
     n_wrong = 0
 
-    asked_questions_list = []
-    
-    final_repeat_list = []
+    asked_question_indexes = []
+    final_repetition = []
 
     for _ in range(len(DATA)):
-        question_number, asked_questions_list = pick_random_new_question(asked_questions_list, DATA)
+        question_number, asked_questions_list = pick_random_new_question(asked_question_indexes, DATA)
 
         user_answer = ask_question(question_number, DATA)
 
@@ -27,11 +26,11 @@ def overhoor(DATA):
 
         is_correct = check_correct(meaning, user_answer)
 
-        n_correct, n_wrong, final_repeat_list = do_administration(is_correct, question_number, n_correct, n_wrong, final_repeat_list, DATA)
+        n_correct, n_wrong, final_repeat_list = do_administration(is_correct, question_number, n_correct, n_wrong, final_repetition, DATA)
 
         show_progress(len(DATA), len(asked_questions_list), n_correct, n_wrong)     
 
-    return final_repeat_list
+    return final_repetition
 
 
 def pick_random_new_question(asked_questions_list, DATA):

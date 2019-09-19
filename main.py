@@ -3,8 +3,10 @@ from converter import convert
 
 from colorama import init, Fore, Back, Style
 from random import randint
+import time
 import pandas as pd
 import argparse
+
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-f") # Filename
@@ -43,16 +45,20 @@ def main():
     # if only end point given
     elif args.e:
         DATA = DATA[:int(args.e)]
-
+    start_time = time.time()
     final_repeat_list = overhoor(DATA)
 
     n_wrong = len(final_repeat_list)
 
     while(final_repeat_list):
         final_repeat_list = overhoor(final_repeat_list)
-
+    end_time = time.time()
     n_total = len(DATA)
     print(str(n_total-n_wrong) + "/" + str(n_total)+ " correct on first try.")
+    print("Time: " + str(round(((end_time - start_time)/60), 1)) + " minutes.")
     print("Grade: " + str(round((((n_total-n_wrong)/n_total)*10), 1)) + "/10")
+    
+
+
 
 main()
