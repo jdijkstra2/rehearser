@@ -10,9 +10,16 @@ Example .xlsx files can be found in the \excel_files directory of the project.
 # How to use
 The rehearser can be used by cloning the project and runnning the main.py file.
 
--> 'python main.py -f hiragana.xlsx' runs the rehearser with the file "hiragana.xlsx" that should be present in the \excel_files directory.
 
 -> 'python main.py' prompts the user for the filename and starts the rehearser with the file provided
+
+-> 'python main.py -f hiragana.xlsx' runs the rehearser with the file "hiragana.xlsx" that should be present in the \excel_files directory.
+
+-> 'python main.py -f hiragana.xlsx -s 30' rehearses from the 30th pair onwards (-s is for start-index)
+
+-> 'python main.py -f hiragana.xlsx -e 30' rehearses the first 30 pairs of the file (-e is for end-index)
+
+-> 'python main.py -f hiragana.xlsx -f -s 30 -e 60 rehearses pairs 30 to 60. 
 
 
 # Japanese Kanji
